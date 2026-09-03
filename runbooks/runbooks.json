@@ -1,0 +1,115 @@
+{
+    "IAM_PERMISSION_DENIED": {
+        "severity": "high",
+        "summary": "Caller is not authorised for the requested resource/action.",
+        "steps": [
+        "Confirm the failing principal and resource from the log entry.",
+        "Use IAM Policy Troubleshooter or inspect the resource/project IAM policy.",
+        "Check whether the required permission belongs to the expected role.",
+        "Review recent IAM changes before adding any new binding.",
+        "Apply least privilege; do not solve by granting Owner/Editor."
+        ]
+    },
+    "QUOTA_OR_RATE_LIMIT": {
+        "severity": "medium",
+        "summary": "Requests are being throttled or an account/service quota is exhausted.",
+        "steps": [
+        "Identify the exact quota or rate limit from the error.",
+        "Check whether traffic increased or retry behaviour is amplifying load.",
+        "Implement exponential backoff with jitter where appropriate.",
+        "Reduce unnecessary calls or spread workload.",
+        "Request a quota increase only when justified by expected load."
+        ]
+    },
+    "SERVICE_5XX_SPIKE": {
+        "severity": "high",
+        "summary": "The service or dependency is returning elevated server errors.",
+        "steps": [
+        "Compare error start time with recent deploy/configuration changes.",
+        "Check upstream dependency health and saturation.",
+        "Inspect traces/logs for the dominant exception or failing dependency.",
+        "Rollback the latest revision if evidence links the regression to release.",
+        "Verify recovery using error-rate and latency metrics."
+        ]
+    },
+    "LATENCY_SATURATION": {
+        "severity": "medium",
+        "summary": "Requests exceed latency objectives and show signs of saturation.",
+        "steps": [
+        "Check p50/p95/p99 latency, CPU, memory and request concurrency.",
+        "Separate application latency from downstream dependency latency.",
+        "Inspect autoscaling and concurrency settings.",
+        "Profile the hot path before only increasing resources.",
+        "Validate recovery against the latency SLO."
+        ]
+    },
+    "OOM_KILLED": {
+        "severity": "high",
+        "summary": "A container exceeded available memory and was killed.",
+        "steps": [
+        "Confirm OOMKilled/exit 137 and the configured memory limit.",
+        "Inspect memory trend, request size and recent code/dependency changes.",
+        "Check for leaks or unbounded in-memory queues/caches.",
+        "Right-size memory only after understanding expected working set.",
+        "Load test the repaired revision."
+        ]
+    },
+    "GKE_CRASHLOOP": {
+        "severity": "high",
+        "summary": "A Kubernetes workload repeatedly fails to start or remain healthy.",
+        "steps": [
+        "kubectl describe the Pod and inspect events.",
+        "kubectl logs the current and previous container instance.",
+        "Check image, command, environment, ConfigMaps, Secrets and mounted resources.",
+        "Check startup/readiness/liveness probes.",
+        "Rollback or fix configuration, then verify restart count stabilises."
+        ]
+    },
+    "PUBSUB_BACKLOG": {
+        "severity": "medium",
+        "summary": "Subscribers are not processing messages at the arrival rate.",
+        "steps": [
+        "Inspect backlog and oldest-unacked-message age.",
+        "Check subscriber errors, latency and ack deadline behaviour.",
+        "Look for poison messages or repeated redelivery.",
+        "Check subscriber concurrency/autoscaling and downstream bottlenecks.",
+        "Scale or optimise only after locating the bottleneck."
+        ]
+    },
+    "DB_CONNECTION_EXHAUSTION": {
+        "severity": "high",
+        "summary": "Application/database connection capacity is exhausted.",
+        "steps": [
+        "Inspect active connections and configured pool sizes.",
+        "Check for leaked connections and transaction duration.",
+        "Compare service scale-out with database connection capacity.",
+        "Bound application pools per instance.",
+        "Change database max connections only with capacity justification."
+        ]
+    },
+    "DNS_RESOLUTION_FAILURE": {
+        "severity": "high",
+        "summary": "The workload cannot resolve a required hostname.",
+        "steps": [
+        "Confirm exact hostname and resolver error.",
+        "Check DNS record/zone and recent DNS/network changes.",
+        "Validate private-zone visibility and VPC/network context.",
+        "Test resolution from the affected runtime environment.",
+        "Restore the record/path and confirm application recovery."
+        ]
+    },
+    "HEALTHY": {
+        "severity": "none",
+        "summary": "No operational incident was recognized.",
+        "steps": []
+    },
+    "UNKNOWN": {
+        "severity": "review",
+        "summary": "The classifier does not have enough confidence to map this event to a known incident.",
+        "steps": [
+        "Escalate for human triage.",
+        "Search surrounding logs/traces/metrics.",
+        "If a recurring incident pattern is confirmed, add a runbook and retraining examples."
+        ]
+    }
+}
